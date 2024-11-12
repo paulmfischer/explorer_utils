@@ -1,16 +1,17 @@
 import { parseArgs, ParseOptions } from '@std/cli/parse-args';
-import { getFiles } from "./file-utils.ts";
 import { list } from '@paulmfischer/list';
+import { search } from '@paulmfischer/search';
 import meta from "./deno.json" with { type: "json" };
 
 const options: ParseOptions = {
-  boolean: ["help", "version"],
+  boolean: ["help", "version", "debug"],
   alias: {
     "help": "h",
     "version": "v",
-    "listFilter": "lf",
-    "searchDirectory": "sd",
-    "searchText": "st"
+    "listFilter": "f",
+    "searchDirectory": "d",
+    "searchText": "t",
+    "debug": "D"
   },
 };
 const args = parseArgs(Deno.args, options);
@@ -20,24 +21,23 @@ const listFilter = args.listFilter;
 const searchDirectory = args.searchDirectory ?? Deno.cwd();
 const searchText = args.searchText;
 
-console.log('args', args);
-console.log('command', command);
+if (args.debug) {
+  console.log('args', args);
+  console.log('command', command);
+}
 
 if (args.help || (args._.length === 0 && !args.version)) {
   printUsage();
   Deno.exit(0);
 } else if (args.version) {
-  console.log(meta.version ? meta.version : "1.0.0");
+  console.log(meta.version);
   Deno.exit(0);
 }
 
 if (command == 'list') {
-  console.log(list(searchDirectory, listFilter));
+  list(searchDirectory, listFilter);
 } else if (command == 'search') {
-  const file = getFiles(searchDirectory).find(file => file.name.includes(searchText as string));
-  if (file) {
-    console.log(file);
-  }
+  search(searchDirectory, searchText);
 }
 
 function printUsage() {
