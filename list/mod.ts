@@ -1,6 +1,7 @@
-import { getFiles, type RecordInformation } from "@paulmfischer/file-utils";
+import { getFiles } from "@paulmfischer/file-utils";
+import { type Result } from "@paulmfischer/common";
 
-export function list(searchDirectory: string, listFilter: string | null = null): RecordInformation[] {
+function list(searchDirectory: string, listFilter: string | null = null) {
   let files = getFiles(searchDirectory);
   if (listFilter == 'files') {
     files = files.filter(file => file.type == 'File');
@@ -9,5 +10,16 @@ export function list(searchDirectory: string, listFilter: string | null = null):
   }
 
   console.log(files);
-  return files;
+}
+
+export function listCommand(searchDirectory: string, listFilter: string | null = null): Result {
+  try {
+    list(searchDirectory, listFilter);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to list directory: ${error}`
+    };
+  }
 }

@@ -1,8 +1,20 @@
-import { parseArgs, ParseOptions } from '@std/cli/parse-args';
-import { list } from '@paulmfischer/list';
-import { search } from '@paulmfischer/search';
+import { parseArgs, ParseOptions  } from '@std/cli/parse-args';
+import { listCommand } from '@paulmfischer/list';
+import { searchCommand } from '@paulmfischer/search';
+import { Result } from "@paulmfischer/common";
 import meta from "./deno.json" with { type: "json" };
 
+interface Args {
+  help: boolean;
+  version: boolean;
+  listFilter: string;
+  searchDirectory: string;
+  searchText: string;
+  debug: boolean;
+  _: Array<string | number>;
+  "--"?: Array<string> | undefined;
+}
+console.log('check', meta.workspace);
 const options: ParseOptions = {
   boolean: ["help", "version", "debug"],
   alias: {
@@ -14,7 +26,7 @@ const options: ParseOptions = {
     "debug": "D"
   },
 };
-const args = parseArgs(Deno.args, options);
+const args = parseArgs(Deno.args, options) as Args;
 
 const command = args._[0];
 const listFilter = args.listFilter;
@@ -35,15 +47,26 @@ if (args.help || (args._.length === 0 && !args.version)) {
 }
 
 if (command == 'list') {
-  list(searchDirectory, listFilter);
+  handleResult(listCommand(searchDirectory, listFilter));
 } else if (command == 'search') {
-  search(searchDirectory, searchText);
+  handleResult(searchCommand(searchDirectory, searchText));
 }
 
-function printUsage() {
+function handleResult(result: Result) {
+  if (!result.success) {
+    printUsage(result.message);
+    Deno.exit(0);
+  }
+}
+
+function printUsage(additionalMessage?: string) {
+  if (additionalMessage) {
+    console.log(additionalMessage);
+  }
+
   console.log("");
   console.log("Usage: eu [command] [options]");
-  console.log("Command:");
+  console.log("Commands:");
   console.log("  list                     List all files in the search directory");
   console.log("    -lf, --listFilter        Filter results by either 'File' or 'Directories'");
   console.log("  search                   Search for a file in the search directory");
