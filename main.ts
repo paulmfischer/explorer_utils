@@ -1,41 +1,29 @@
 import { parseArgs, ParseOptions  } from '@std/cli/parse-args';
 import { listCommand } from '@paulmfischer/list';
 import { searchCommand } from '@paulmfischer/search';
-import { Result } from "@paulmfischer/common";
+import { type Result, type Args } from "@paulmfischer/common";
 import meta from "./deno.json" with { type: "json" };
 
-interface Args {
-  help: boolean;
-  version: boolean;
-  listFilter: string;
-  searchDirectory: string;
-  searchText: string;
-  debug: boolean;
-  _: Array<string | number>;
-  "--"?: Array<string> | undefined;
-}
-console.log('check', meta.workspace);
 const options: ParseOptions = {
-  boolean: ["help", "version", "debug"],
+  boolean: ["help", "version", "debug", "recursive"],
   alias: {
     "help": "h",
     "version": "v",
     "listFilter": "f",
     "searchDirectory": "d",
     "searchText": "t",
+    "recursive": "r",
     "debug": "D"
   },
 };
 const args = parseArgs(Deno.args, options) as Args;
 
 const command = args._[0];
-const listFilter = args.listFilter;
-const searchDirectory = args.searchDirectory ?? Deno.cwd();
-const searchText = args.searchText;
+args.searchDirectory = args.searchDirectory ?? Deno.cwd();
 
 if (args.debug) {
-  console.log('args', args);
   console.log('command', command);
+  console.log('args', args);
 }
 
 if (args.help || (args._.length === 0 && !args.version)) {
@@ -47,9 +35,9 @@ if (args.help || (args._.length === 0 && !args.version)) {
 }
 
 if (command == 'list') {
-  handleResult(listCommand(searchDirectory, listFilter));
+  handleResult(listCommand(args));
 } else if (command == 'search') {
-  handleResult(searchCommand(searchDirectory, searchText));
+  handleResult(searchCommand(args));
 }
 
 function handleResult(result: Result) {
@@ -68,10 +56,12 @@ function printUsage(additionalMessage?: string) {
   console.log("Usage: eu [command] [options]");
   console.log("Commands:");
   console.log("  list                     List all files in the search directory");
-  console.log("    -lf, --listFilter        Filter results by either 'File' or 'Directories'");
+  console.log("    -f, --listFilter        Filter results by either 'File' or 'Directories'");
+  console.log("    -r, --recursive         Recursively list all the files and/or directories, ignoring hidden subfolders by default");
   console.log("  search                   Search for a file in the search directory");
-  console.log("    -sd, --searchDirectory   Directory in which to perform command");
-  console.log("    -st, --searchText        Directory in which to perform command");
+  console.log("    -d, --searchDirectory   Directory in which to perform command");
+  console.log("    -t, --searchText        Search text to look for in file name, directory(, or in file?)");
+  console.log("    -r, --recursive         Recursively search under the searchDirectory, ignoring hidden subfolders by default");
   console.log("Options:");
   console.log("  -h, --help               Show this help message");
   console.log("  -v, --version            Show the version number");

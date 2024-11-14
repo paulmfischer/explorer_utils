@@ -1,17 +1,14 @@
 import { getFiles, type RecordInformation } from "@paulmfischer/file-utils";
-import { type Result } from "@paulmfischer/common";
+import { type Args, type Result } from "@paulmfischer/common";
 
-function search(searchDirectory: string, searchText: string | null = null): RecordInformation | null {
-  const file = getFiles(searchDirectory).find(file => file.name.includes(searchText as string));
-  if (file) {
-    console.log(file);
-    return file;
-  }
-
-  return null;
+function search(args: Args): RecordInformation[] {
+  const files = getFiles(args.searchDirectory, args.recursive).filter(file => file.name.includes(args.searchText as string));
+  return files;
 }
 
-export function searchCommand(searchDirectory: string, searchText: string | null = null): Result {
+export function searchCommand(args: Args): Result {
+  const searchText = args.searchText;
+
   if (!searchText) {
     return {
       success: false,
@@ -19,9 +16,16 @@ export function searchCommand(searchDirectory: string, searchText: string | null
     };
   }
 
-  search(searchDirectory, searchText);
-
-  return {
-    success: true,
+  try {
+    const file = search(args);
+    if (file) {
+      console.log(file);
+    }
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to search directory: ${error}`
+    };
   }
 }

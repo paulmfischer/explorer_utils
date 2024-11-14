@@ -1,20 +1,23 @@
-import { getFiles } from "@paulmfischer/file-utils";
-import { type Result } from "@paulmfischer/common";
+import { getFiles, type RecordInformation } from "@paulmfischer/file-utils";
+import { type Args, type Result } from "@paulmfischer/common";
 
-function list(searchDirectory: string, listFilter: string | null = null) {
-  let files = getFiles(searchDirectory);
-  if (listFilter == 'files') {
+function list(args: Args): RecordInformation[] {
+  console.log('getting files for list', args);
+  let files = getFiles(args.searchDirectory, args.recursive);
+  if (args.listFilter == 'files') {
     files = files.filter(file => file.type == 'File');
-  } else if (listFilter == 'directories') {
+  } else if (args.listFilter == 'directories') {
     files = files.filter(file => file.type == 'Directory');
   }
 
-  console.log(files);
+  return files;
 }
 
-export function listCommand(searchDirectory: string, listFilter: string | null = null): Result {
+export function listCommand(args: Args): Result {
   try {
-    list(searchDirectory, listFilter);
+    const files = list(args);
+    console.log(files);
+
     return { success: true };
   } catch (error) {
     return {
