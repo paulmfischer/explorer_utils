@@ -1,22 +1,21 @@
-import { getFiles, type RecordInformation } from "@paulmfischer/file-utils";
-import { type Args, type Result } from "@paulmfischer/common";
+import { getFiles } from "@paulmfischer/file-utils";
+import { sessionData, type Result, type RecordInformation, printResults } from "@paulmfischer/common";
 
-function list(args: Args): RecordInformation[] {
-  console.log('getting files for list', args);
-  let files = getFiles(args.searchDirectory, args.recursive);
-  if (args.listFilter == 'files') {
+function list(): RecordInformation[] {
+  let files = getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
+  if (sessionData.args.listFilter == 'files') {
     files = files.filter(file => file.type == 'File');
-  } else if (args.listFilter == 'directories') {
+  } else if (sessionData.args.listFilter == 'directories') {
     files = files.filter(file => file.type == 'Directory');
   }
 
   return files;
 }
 
-export function listCommand(args: Args): Result {
+export function listCommand(): Result {
   try {
-    const files = list(args);
-    console.log(files);
+    const files = list();
+    printResults(files);
 
     return { success: true };
   } catch (error) {

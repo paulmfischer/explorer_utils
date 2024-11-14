@@ -1,7 +1,7 @@
 import { parseArgs, ParseOptions  } from '@std/cli/parse-args';
 import { listCommand } from '@paulmfischer/list';
 import { searchCommand } from '@paulmfischer/search';
-import { type Result, type Args } from "@paulmfischer/common";
+import { sessionData, type Result, type Args } from "@paulmfischer/common";
 import meta from "./deno.json" with { type: "json" };
 
 const options: ParseOptions = {
@@ -17,9 +17,10 @@ const options: ParseOptions = {
   },
 };
 const args = parseArgs(Deno.args, options) as Args;
-
 const command = args._[0];
-args.searchDirectory = args.searchDirectory ?? Deno.cwd();
+
+sessionData.args = args;
+sessionData.args.searchDirectory = args.searchDirectory ?? Deno.cwd();
 
 if (args.debug) {
   console.log('command', command);
@@ -35,9 +36,9 @@ if (args.help || (args._.length === 0 && !args.version)) {
 }
 
 if (command == 'list') {
-  handleResult(listCommand(args));
+  handleResult(listCommand());
 } else if (command == 'search') {
-  handleResult(searchCommand(args));
+  handleResult(searchCommand());
 }
 
 function handleResult(result: Result) {

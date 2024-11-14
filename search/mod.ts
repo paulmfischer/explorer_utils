@@ -1,13 +1,12 @@
-import { getFiles, type RecordInformation } from "@paulmfischer/file-utils";
-import { type Args, type Result } from "@paulmfischer/common";
+import { getFiles } from "@paulmfischer/file-utils";
+import { sessionData, type Result, type RecordInformation, printResults } from "@paulmfischer/common";
 
-function search(args: Args): RecordInformation[] {
-  const files = getFiles(args.searchDirectory, args.recursive).filter(file => file.name.includes(args.searchText as string));
-  return files;
+function search(): RecordInformation[] {
+  return getFiles(sessionData.args.searchDirectory, sessionData.args.recursive).filter(file => file.name.includes(sessionData.args.searchText as string));
 }
 
-export function searchCommand(args: Args): Result {
-  const searchText = args.searchText;
+export function searchCommand(): Result {
+  const searchText = sessionData.args.searchText;
 
   if (!searchText) {
     return {
@@ -17,10 +16,8 @@ export function searchCommand(args: Args): Result {
   }
 
   try {
-    const file = search(args);
-    if (file) {
-      console.log(file);
-    }
+    const files = search();
+    printResults(files);
     return { success: true };
   } catch (error) {
     return {
