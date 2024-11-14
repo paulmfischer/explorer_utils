@@ -1,10 +1,11 @@
 {
   "version": "0.1.0",
   "tasks": {
-    "dev": "deno run --allow-read main.ts",
+    "dev": "deno run --allow-env --allow-read main.ts",
     "compile": "deno compile --output eu --allow-read main.ts"
   },
   "imports": {
+    "@nothing628/chalk": "jsr:@nothing628/chalk@^1.0.1",
     "@std/assert": "jsr:@std/assert@1",
     "@std/cli": "jsr:@std/cli@^1.0.6"
   },
