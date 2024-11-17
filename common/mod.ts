@@ -8,7 +8,8 @@ export interface Result {
 export interface Args {
   help: boolean;
   version: boolean;
-  listFilter: string;
+  listFiles: boolean;
+  listDirectories: boolean;
   searchDirectory: string;
   searchText: string;
   recursive: boolean;
@@ -17,10 +18,14 @@ export interface Args {
   "--"?: Array<string> | undefined;
 }
 
+export enum RecordType {
+  File = 'File',
+  Directory = 'Directory',
+}
 export interface RecordInformation {
   name: string;
   path: string;
-  type: 'File' | 'Directory';
+  type: RecordType;
 }
 
 export const sessionData: { args: Args } = { args: {} as Args};
@@ -42,7 +47,7 @@ export function printResults(files: RecordInformation[]) {
     }
     return maxLength;
   }, 0);
-  const maxTypeLength = files.some(file => file.type === 'Directory') ? 'Directory'.length : 'File'.length;
+  const maxTypeLength = files.some(file => file.type === RecordType.Directory) ? RecordType.Directory.length : RecordType.File.length;
 
   for (const file of files) {
     const namePadding = getPadding(maxNameLength - file.name.length);

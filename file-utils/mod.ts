@@ -1,4 +1,4 @@
-import { type RecordInformation } from "@paulmfischer/common";
+import { type RecordInformation, RecordType } from "@paulmfischer/common";
 
 export function getFiles(searchDirectory: string, recursively: boolean = false): RecordInformation[] {
   const files: RecordInformation[] = [];
@@ -7,7 +7,7 @@ export function getFiles(searchDirectory: string, recursively: boolean = false):
       files.push({
         name: dirEntry.isDirectory ? `${dirEntry.name}/` : dirEntry.name,
         path: searchDirectory,
-        type: dirEntry.isDirectory ? 'Directory' : 'File'
+        type: dirEntry.isDirectory ? RecordType.Directory : RecordType.File
       });
     }
     
@@ -16,7 +16,7 @@ export function getFiles(searchDirectory: string, recursively: boolean = false):
         files.push({
           name: subDirEntry.name,
           path: `${searchDirectory}/${dirEntry.name}`,
-          type: dirEntry.isDirectory ? 'Directory' : 'File'
+          type: dirEntry.isDirectory ? RecordType.Directory : RecordType.File
         });
       }
     }
