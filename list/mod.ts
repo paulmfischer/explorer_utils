@@ -1,12 +1,12 @@
 import { getFiles } from "@paulmfischer/file-utils";
-import { sessionData, type Result, type RecordInformation, printResults } from "@paulmfischer/common";
+import { sessionData, type Result, type RecordInformation, printResults, RecordType } from "@paulmfischer/common";
 
 function list(): RecordInformation[] {
   let files = getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
-  if (sessionData.args.listFilter == 'files') {
-    files = files.filter(file => file.type == 'File');
-  } else if (sessionData.args.listFilter == 'directories') {
-    files = files.filter(file => file.type == 'Directory');
+  if (sessionData.args.listFiles) {
+    files = files.filter(file => file.type == RecordType.File);
+  } else if (sessionData.args.listDirectories) {
+    files = files.filter(file => file.type == RecordType.Directory);
   }
 
   return files;

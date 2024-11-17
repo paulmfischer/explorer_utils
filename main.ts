@@ -5,13 +5,15 @@ import { sessionData, type Result, type Args } from "@paulmfischer/common";
 import meta from "./deno.json" with { type: "json" };
 
 const options: ParseOptions = {
-  boolean: ["help", "version", "debug", "recursive"],
+  boolean: true,
   alias: {
     "help": "h",
     "version": "v",
-    "listFilter": "f",
-    "searchDirectory": "d",
-    "searchText": "t",
+    "listFiles": "lf",
+    "listDirectories": "ld",
+    "searchDirectory": "sd",
+    "searchText": "st",
+    "searchFiles": "sf",
     "recursive": "r",
     "debug": "D"
   },
@@ -57,11 +59,13 @@ function printUsage(additionalMessage?: string) {
   console.log("Usage: eu [command] [options]");
   console.log("Commands:");
   console.log("  list                     List all files in the search directory");
-  console.log("    -f, --listFilter        Filter results by either 'File' or 'Directories'");
+  console.log("    --lf, --listFiles       Filter results to Files");
+  console.log("    --ld, --listDirectories Filter results to Directories");
   console.log("    -r, --recursive         Recursively list all the files and/or directories, ignoring hidden subfolders by default");
   console.log("  search                   Search for a file in the search directory");
-  console.log("    -d, --searchDirectory   Directory in which to perform command");
-  console.log("    -t, --searchText        Search text to look for in file name, directory(, or in file?)");
+  console.log("    --sd, --searchDirectory Directory in which to perform command");
+  console.log("    --st, --searchText      Search text to look for in file name, directory");
+  console.log("    --sf, --searchFiles     Search text in files as well as for file name and directory");
   console.log("    -r, --recursive         Recursively search under the searchDirectory, ignoring hidden subfolders by default");
   console.log("Options:");
   console.log("  -h, --help               Show this help message");
