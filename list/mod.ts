@@ -1,8 +1,8 @@
 import { getFiles } from "@paulmfischer/file-utils";
 import { sessionData, type Result, type RecordInformation, printResults, RecordType } from "@paulmfischer/common";
 
-function list(): RecordInformation[] {
-  let files = getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
+async function list(): Promise<RecordInformation[]> {
+  let files = await getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
   if (sessionData.args.listFiles) {
     files = files.filter(file => file.type == RecordType.File);
   } else if (sessionData.args.listDirectories) {
@@ -12,9 +12,9 @@ function list(): RecordInformation[] {
   return files;
 }
 
-export function listCommand(): Result {
+export async function listCommand(): Promise<Result> {
   try {
-    const files = list();
+    const files = await list();
     printResults(files);
 
     return { success: true };

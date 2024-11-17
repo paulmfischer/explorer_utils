@@ -1,11 +1,22 @@
 import { getFiles } from "@paulmfischer/file-utils";
 import { sessionData, type Result, type RecordInformation, printResults } from "@paulmfischer/common";
 
-function search(): RecordInformation[] {
-  return getFiles(sessionData.args.searchDirectory, sessionData.args.recursive).filter(file => file.name.includes(sessionData.args.searchText as string));
+async function search(): Promise<RecordInformation[]> {
+  if (sessionData.args.debug) {
+    console.log('start search', sessionData.args.searchDirectory, sessionData.args.searchText);
+  }
+  let files = await getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
+  if (sessionData.args.debug) {
+    console.log('end search', sessionData.args.searchDirectory, files);
+  }
+  files = files.filter(file => file.name.includes(sessionData.args.searchText));
+  if (sessionData.args.debug) {
+    console.log('filtered search results', files);
+  }
+  return files;
 }
 
-export function searchCommand(): Result {
+export async function searchCommand(): Promise<Result> {
   const searchText = sessionData.args.searchText;
 
   if (!searchText) {
@@ -15,8 +26,9 @@ export function searchCommand(): Result {
     };
   }
 
+
   try {
-    const files = search();
+    const files = await search();
     printResults(files);
     return { success: true };
   } catch (error) {
