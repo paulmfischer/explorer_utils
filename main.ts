@@ -38,9 +38,9 @@ if (args.help || (args._.length === 0 && !args.version)) {
 }
 
 if (command == 'list') {
-  handleResult(listCommand());
+  handleResult(await listCommand());
 } else if (command == 'search') {
-  handleResult(searchCommand());
+  handleResult(await searchCommand());
 }
 
 function handleResult(result: Result) {
