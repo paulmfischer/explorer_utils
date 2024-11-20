@@ -3,7 +3,6 @@ import { listCommand } from '@paulmfischer/list';
 import { searchCommand } from '@paulmfischer/search';
 import { sessionData, type Result, type Args } from "@paulmfischer/common";
 import meta from "./deno.json" with { type: "json" };
-import { searchFileForText } from "./file-utils/mod.ts";
 
 const options: ParseOptions = {
   boolean: true,
@@ -43,8 +42,6 @@ if (command == 'list') {
 } else if (command == 'search') {
   handleResult(await searchCommand());
 }
-
-console.log(await searchFileForText('main_test.ts', 'ad'));
 
 function handleResult(result: Result) {
   if (!result.success) {

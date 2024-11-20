@@ -31,24 +31,31 @@ export async function getFiles(searchDirectory: string, recursively: boolean = f
 
 export async function searchFileForText(fileName: string, searchText: string): Promise<FileSearchInformation[]> {
   const fileSearchInfo: FileSearchInformation[] = [];
+  if (sessionData.args.debug) {
+    console.log('searching file:', fileName, 'search text:', searchText);
+  }
   const file = await Deno.open(fileName, { read: true });
   const decoder = new TextDecoder();
-  let lineNumber = 1;
   for await (const chunk of file.readable) {
-    const lineText = decoder.decode(chunk);
-    console.log(lineText);
-    if (lineText.includes(searchText)) {
-      fileSearchInfo.push({
-        line: lineText,
-        lineNumber
-      });
+    const fileText = decoder.decode(chunk);
+    if (sessionData.args.debug) {
+      console.log('file text', fileText);
     }
-    lineNumber++;
+    const fileByLines = fileText.split('\r\n');
+    let lineNumber = 1;
+    for (const line of fileByLines) {
+      if (sessionData.args.debug) {
+        console.log('line', line, `line includes search text ${searchText}`, line.includes(searchText));
+      }
+      if (line.includes(searchText)) {
+        fileSearchInfo.push({
+          line: line,
+          lineNumber
+        });
+      }
+      lineNumber++;
+    }
   }
-  // Do work with file
-  // if (file) {
-  //   file.close();
-  // }
 
   return fileSearchInfo;
 }
