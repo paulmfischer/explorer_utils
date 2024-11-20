@@ -27,6 +27,10 @@ export interface RecordInformation {
   path: string;
   type: RecordType;
 }
+export interface FileSearchInformation {
+  lineNumber: number;
+  line: string
+}
 
 export const sessionData: { args: Args } = { args: {} as Args};
 
