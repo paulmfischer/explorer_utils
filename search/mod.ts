@@ -1,6 +1,7 @@
 import { getFiles, searchFileForText } from "@paulmfischer/file-utils";
-import { sessionData, type Result, type RecordInformation, printResults, type FileSearchInformation, RecordType } from "@paulmfischer/common";
+import { sessionData, type Result, type RecordInformation, type FileSearchInformation, RecordType, getPadding } from "@paulmfischer/common";
 import { join } from '@std/path/join';
+import chalk from '@nothing628/chalk';
 
 interface FileTextSearchResult {
   fileName: string;
@@ -11,7 +12,7 @@ interface SearchResults {
   fileResults: RecordInformation[];
 }
 
-async function search(): Promise<RecordInformation[]> {
+async function search(): Promise<SearchResults> {
   const searchResults: SearchResults = {
     fileTextSearchResults: [],
     fileResults: [],
@@ -33,18 +34,46 @@ async function search(): Promise<RecordInformation[]> {
       });
     }
   }
-  console.log('text search results', searchResults);
-  files = files.filter(file => file.name.includes(sessionData.args.searchText));
   if (sessionData.args.debug) {
-    console.log('filtered search results', files);
+    console.log('text search results', searchResults);
   }
-  return files;
+  searchResults.fileResults = files.filter(file => file.name.includes(sessionData.args.searchText));
+  if (sessionData.args.debug) {
+    console.log('filtered search results', searchResults.fileResults);
+  }
+  return searchResults;
+}
+
+export function printSearchResults(searchResults: SearchResults) {
+  const maxNameLength = searchResults.fileResults.reduce((maxLength, file) => {
+    if (file.name.length > maxLength) {
+      maxLength = file.name.length;
+    }
+    return maxLength;
+  }, 0);
+  const maxTypeLength = searchResults.fileResults.some(file => file.type === RecordType.Directory) ? RecordType.Directory.length : RecordType.File.length;
+
+  for (const file of searchResults.fileResults) {
+    const namePadding = getPadding(maxNameLength - file.name.length);
+    const typePadding = getPadding(maxTypeLength - file.type.length);
+
+    console.log(chalk.green(file.name) + namePadding + chalk.grey(`-- ${file.type}${typePadding}-- `) + chalk.blue(file.path));
+  }
+
+  const searchRegex = new RegExp(`(${sessionData.args.searchText})`, 'g');
+  for (const fileText of searchResults.fileTextSearchResults) {
+    console.log(`${chalk.blue(fileText.fileName)}:`);
+    for (const lineFound of fileText.textSearchResults) {
+      const lineDisplayText = chalk.green(lineFound.line.replace(searchRegex, `${chalk.bold.yellow('$1')}`));
+      console.log(`    ${chalk.grey(lineFound.lineNumber)}: ${lineDisplayText}`);
+    }
+  }
 }
 
 export async function searchCommand(): Promise<Result> {
   const searchText = sessionData.args.searchText;
 
-  if (!searchText) {
+  if (!searchText || searchText.trim() == '') {
     return {
       success: false,
       message: 'Search text is required with the search command, supply with --searchText or --st'
@@ -52,8 +81,8 @@ export async function searchCommand(): Promise<Result> {
   }
 
   try {
-    const files = await search();
-    printResults(files);
+    const results = await search();
+    printSearchResults(results);
     return { success: true };
   } catch (error) {
     return {

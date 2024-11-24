@@ -1,3 +1,4 @@
+import { EOL } from "@std/fs/eol";
 import { sessionData, type RecordInformation, RecordType, type FileSearchInformation } from "@paulmfischer/common";
 
 export async function getFiles(searchDirectory: string, recursively: boolean = false): Promise<RecordInformation[]> {
@@ -41,7 +42,7 @@ export async function searchFileForText(fileName: string, searchText: string): P
     if (sessionData.args.debug) {
       console.log('file text', fileText);
     }
-    const fileByLines = fileText.split('\r\n');
+    const fileByLines = fileText.split(EOL);
     let lineNumber = 1;
     for (const line of fileByLines) {
       if (sessionData.args.debug) {

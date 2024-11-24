@@ -25,7 +25,7 @@ export enum RecordType {
 export interface RecordInformation {
   name: string;
   path: string;
-  type: RecordType;
+  type: RecordType; //TODO: convert to boolean isDirectory
 }
 export interface FileSearchInformation {
   lineNumber: number;
@@ -35,7 +35,7 @@ export interface FileSearchInformation {
 export const sessionData: { args: Args } = { args: {} as Args};
 
 const paddingChr = ' ';
-function getPadding(spacingDiff: number) {
+export function getPadding(spacingDiff: number) {
   let typePadding = ' ';
   for (let index = 0; index < spacingDiff; index++) {
     typePadding += paddingChr;
