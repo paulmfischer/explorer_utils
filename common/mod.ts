@@ -25,7 +25,8 @@ export enum RecordType {
 export interface RecordInformation {
   name: string;
   path: string;
-  type: RecordType; //TODO: convert to boolean isDirectory
+  isDirectory: boolean;
+  type: RecordType;
 }
 export interface FileSearchInformation {
   lineNumber: number;
@@ -51,7 +52,7 @@ export function printResults(files: RecordInformation[]) {
     }
     return maxLength;
   }, 0);
-  const maxTypeLength = files.some(file => file.type === RecordType.Directory) ? RecordType.Directory.length : RecordType.File.length;
+  const maxTypeLength = files.some(file => file.isDirectory) ? RecordType.Directory.length : RecordType.File.length;
 
   for (const file of files) {
     const namePadding = getPadding(maxNameLength - file.name.length);
