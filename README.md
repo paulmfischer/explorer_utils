@@ -27,12 +27,12 @@ Options:
 #### List
 List files/directories for current folder: `eu list`
 
-![eu list results](images/list-results.png)
+![eu list results](/images/list-results.png)
 
 #### Search
 Search current folders file/directoy names as well as contents for the text `add`: `eu search --searchText=add`
 
-![eu search results](images/search-results.png)
+![eu search results](/images/search-results.png)
 
 ## Development
 
