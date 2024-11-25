@@ -24,7 +24,7 @@ async function search(): Promise<SearchResults> {
   if (sessionData.args.debug) {
     console.log('end search', sessionData.args.searchDirectory, files);
   }
-  for (const file of files.filter(file => file.type == RecordType.File)) {
+  for (const file of files.filter(file => !file.isDirectory)) {
     const fileName = join(`${file.path}/${file.name}`);
     const fileSearchResults = await searchFileForText(fileName, sessionData.args.searchText);
     if (fileSearchResults.length > 0) {
@@ -51,7 +51,7 @@ export function printSearchResults(searchResults: SearchResults) {
     }
     return maxLength;
   }, 0);
-  const maxTypeLength = searchResults.fileResults.some(file => file.type === RecordType.Directory) ? RecordType.Directory.length : RecordType.File.length;
+  const maxTypeLength = searchResults.fileResults.some(file => file.isDirectory) ? RecordType.Directory.length : RecordType.File.length;
 
   for (const file of searchResults.fileResults) {
     const namePadding = getPadding(maxNameLength - file.name.length);

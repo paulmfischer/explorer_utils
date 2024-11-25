@@ -1,12 +1,12 @@
 import { getFiles } from "@paulmfischer/file-utils";
-import { sessionData, type Result, type RecordInformation, printResults, RecordType } from "@paulmfischer/common";
+import { sessionData, type Result, type RecordInformation, printResults } from "@paulmfischer/common";
 
 async function list(): Promise<RecordInformation[]> {
   let files = await getFiles(sessionData.args.searchDirectory, sessionData.args.recursive);
   if (sessionData.args.listFiles) {
-    files = files.filter(file => file.type == RecordType.File);
+    files = files.filter(file => !file.isDirectory);
   } else if (sessionData.args.listDirectories) {
-    files = files.filter(file => file.type == RecordType.Directory);
+    files = files.filter(file => file.isDirectory);
   }
 
   return files;

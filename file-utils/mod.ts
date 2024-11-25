@@ -8,6 +8,7 @@ export async function getFiles(searchDirectory: string, recursively: boolean = f
       files.push({
         name: dirEntry.isDirectory ? `${dirEntry.name}/` : dirEntry.name,
         path: searchDirectory,
+        isDirectory: dirEntry.isDirectory,
         type: dirEntry.isDirectory ? RecordType.Directory : RecordType.File
       });
     }
@@ -17,6 +18,7 @@ export async function getFiles(searchDirectory: string, recursively: boolean = f
         files.push({
           name: subDirEntry.type == RecordType.Directory ? `${subDirEntry.name}/` : subDirEntry.name,
           path: `${searchDirectory}/${dirEntry.name}`,
+          isDirectory: subDirEntry.isDirectory,
           type: subDirEntry.type,
         });
       }
