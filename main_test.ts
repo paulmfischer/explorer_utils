@@ -1,7 +1,10 @@
 import { assertEquals } from "@std/assert";
-import { add } from "./main.ts";
+
+function multiply_nums(num1: number, num2: number) {
+  return num1 * num2;
+}
 
 Deno.test(function addTest() {
-  const multiMathc = add(2, 3) + add(4, 5);
-  assertEquals(add(2, 3), 5);
+  const multiMathc = multiply_nums(2, 3) + multiply_nums(4, 5);
+  assertEquals(multiMathc, 5);
 });
