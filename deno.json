@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "tasks": {
     "dev": "deno run --allow-env --allow-read main.ts",
-    "compile": "deno compile --output eu --allow-read main.ts"
+    "compile": "deno compile --output eu --allow-read --allow-env main.ts"
   },
   "imports": {
     "@nothing628/chalk": "jsr:@nothing628/chalk@^1.0.1",

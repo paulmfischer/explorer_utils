@@ -70,4 +70,5 @@ function printUsage(additionalMessage?: string) {
   console.log("Options:");
   console.log("  -h, --help               Show this help message");
   console.log("  -v, --version            Show the version number");
+  console.log("  -D, --debug              Print debug statements");
 }
